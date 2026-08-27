@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maximal Electroshock Seizure — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="sub">CNS / Neuropharmacology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Anticonvulsant Activity · Grand Mal Seizure Model</div>
+    <h1>Maximal Electroshock Seizure (MES) Test</h1>
+    <p class="principle">A supramaximal electric shock (50 mA, 0.2 s, via
+    corneal or ear electrodes) is delivered to induce tonic hind-limb extension
+    (THLE) — a model of generalized tonic-clonic (grand mal) seizures. A drug is
+    "protective" if it abolishes the tonic hind-limb extensor phase. Phenytoin
+    and carbamazepine are classically active in this model; each animal is
+    scored protected / not protected.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage">
+        <div id="mouse" style="position:absolute; font-size:2.2rem; left:50%; top:55%; transform:translate(-50%,-50%);">🐁</div>
+        <div class="stage-label">Electroconvulsiometer · 50 mA, 0.2 s, corneal electrodes</div>
+      </div>
+
+      <div class="field">
+        <label>Treatment (30 min pretest)</label>
+        <select id="drug">
+          <option value="saline">Normal saline (control)</option>
+          <option value="phenytoin10">Phenytoin 10 mg/kg i.p.</option>
+          <option value="phenytoin25">Phenytoin 25 mg/kg i.p.</option>
+          <option value="phenytoin50">Phenytoin 50 mg/kg i.p.</option>
+          <option value="carbamazepine20">Carbamazepine 20 mg/kg i.p.</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Deliver shock & score hind-limb extension</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <div class="readout">
+        <div><span class="big" id="protVal">—</span></div>
+        <div id="protNote" style="font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft); margin-top:0.3rem;"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>Outcome</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control protection rate</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group protection rate</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">Animals protected / tested</span><span class="v" id="ratio">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script>
+const drugLabels = {
+  saline: "Saline (control)",
+  phenytoin10: "Phenytoin 10 mg/kg",
+  phenytoin25: "Phenytoin 25 mg/kg",
+  phenytoin50: "Phenytoin 50 mg/kg",
+  carbamazepine20: "Carbamazepine 20 mg/kg"
+};
+
+const protectProb = {
+  saline: 0.03,
+  phenytoin10: 0.35,
+  phenytoin25: 0.65,
+  phenytoin50: 0.90,
+  carbamazepine20: 0.70
+};
+
+const log = new TrialLog(document.getElementById('logBody'), [{key:'n'},{key:'drug'},{key:'outcome'}]);
+let n = 0;
+
+document.getElementById('runBtn').onclick = () => {
+  n++;
+  const drug = document.getElementById('drug').value;
+  const protected_ = Math.random() < protectProb[drug];
+
+  const mouse = document.getElementById('mouse');
+  mouse.style.transition = 'none';
+  mouse.style.transform = 'translate(-50%,-50%)';
+  setTimeout(()=>{
+    mouse.style.transition = 'transform 0.2s ease';
+    mouse.style.transform = protected_
+      ? 'translate(-50%,-50%) scale(1.05)'
+      : 'translate(-50%,-50%) rotate(90deg) scaleX(1.4)';
+  }, 150);
+
+  setText('protVal', protected_ ? 'PROTECTED' : 'THLE +');
+  document.getElementById('protVal').style.color = protected_ ? 'var(--ok)' : 'var(--carmine)';
+  setText('protNote', protected_ ? 'Tonic hind-limb extension abolished' : 'Tonic hind-limb extension present');
+
+  log.add({n, drug: drugLabels[drug], outcome: protected_ ? 'Protected' : 'Not protected'});
+
+  const ctrlRows = log.rows.filter(r => r.drug === 'Saline (control)');
+  const grpRows = log.rows.filter(r => r.drug === drugLabels[drug]);
+  const ctrlRate = ctrlRows.length ? round(100*ctrlRows.filter(r=>r.outcome==='Protected').length/ctrlRows.length,0) : null;
+  const grpProtected = grpRows.filter(r=>r.outcome==='Protected').length;
+  const grpRate = round(100*grpProtected/grpRows.length,0);
+
+  setText('ctrlMean', ctrlRate !== null ? ctrlRate + '%' : '—');
+  setText('grpMean', grpRate + '%');
+  setText('ratio', grpProtected + ' / ' + grpRows.length);
+  setText('nTrials', n);
+};
+
+document.getElementById('resetBtn').onclick = () => {
+  log.reset(); n = 0;
+  setText('protVal','—'); setText('protNote','');
+  setText('ctrlMean','—'); setText('grpMean','—'); setText('ratio','—'); setText('nTrials',0);
+};
+</script>
+</body>
+</html>

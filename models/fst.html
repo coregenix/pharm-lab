@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forced Swim Test — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="sub">CNS / Neuropharmacology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Antidepressant Activity · Behavioral Despair Model</div>
+    <h1>Forced Swim Test (Porsolt)</h1>
+    <p class="principle">A mouse or rat is placed in an inescapable cylinder of
+    water for 6 minutes. After initial escape attempts, untreated animals adopt
+    an immobile, floating posture ("behavioral despair"). Immobility time over
+    the final 4 minutes is scored. Antidepressants of multiple classes
+    (tricyclics, SSRIs) reduce immobility time, increasing swimming/climbing.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage" style="background:linear-gradient(#1a2a35,#123);">
+        <div style="position:absolute; left:50%; top:60%; font-size:2rem; transform:translate(-50%,-50%);">🐁</div>
+        <div class="stage-label">Cylinder, 25 cm water · 6 min session (4 min scored)</div>
+      </div>
+
+      <div class="field">
+        <label>Treatment (given 60/30/5 min pretest, standard 3-injection schedule)</label>
+        <select id="drug">
+          <option value="saline">Normal saline (control)</option>
+          <option value="imipramine10">Imipramine 10 mg/kg i.p.</option>
+          <option value="imipramine20">Imipramine 20 mg/kg i.p.</option>
+          <option value="fluoxetine10">Fluoxetine 10 mg/kg i.p.</option>
+          <option value="fluoxetine20">Fluoxetine 20 mg/kg i.p.</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Place in cylinder & score 4-min immobility</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <div class="readout">
+        <div><span class="big" id="immVal">—</span> <span class="unit">s immobile / 240 s</span></div>
+        <div id="immNote" style="font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft); margin-top:0.3rem;"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>Immobility (s)</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control mean immobility</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group mean immobility</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">% reduction vs control</span><span class="v" id="pctChange">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script>
+const drugLabels = {
+  saline: "Saline (control)",
+  imipramine10: "Imipramine 10 mg/kg",
+  imipramine20: "Imipramine 20 mg/kg",
+  fluoxetine10: "Fluoxetine 10 mg/kg",
+  fluoxetine20: "Fluoxetine 20 mg/kg"
+};
+
+function computeImmobility(drug){
+  const base = randNormal(165, 12); // seconds, out of 240
+  let factor = 1;
+  if (drug === 'imipramine10') factor = 0.72;
+  if (drug === 'imipramine20') factor = 0.50;
+  if (drug === 'fluoxetine10') factor = 0.78;
+  if (drug === 'fluoxetine20') factor = 0.58;
+  let imm = base * factor + randNormal(0, 8);
+  return clamp(Math.round(imm), 20, 240);
+}
+
+const log = new TrialLog(document.getElementById('logBody'), [{key:'n'},{key:'drug'},{key:'imm'}]);
+let n = 0;
+
+document.getElementById('runBtn').onclick = () => {
+  n++;
+  const drug = document.getElementById('drug').value;
+  const imm = computeImmobility(drug);
+
+  setText('immVal', imm);
+  setText('immNote', 'Immobility scored over final 4 min of 6-min session');
+
+  log.add({n, drug: drugLabels[drug], imm});
+
+  const ctrlVals = log.valuesFor('imm', r => r.drug === 'Saline (control)').map(v=>parseFloat(v));
+  const grpVals = log.valuesFor('imm', r => r.drug === drugLabels[drug]).map(v=>parseFloat(v));
+  const ctrlM = ctrlVals.length ? round(mean(ctrlVals),1) : null;
+  const grpM = round(mean(grpVals),1);
+
+  setText('ctrlMean', ctrlM !== null ? ctrlM + ' s' : '—');
+  setText('grpMean', grpM + ' s');
+  setText('pctChange', ctrlM ? round(((ctrlM-grpM)/ctrlM)*100,0) + '%' : '—');
+  setText('nTrials', n);
+};
+
+document.getElementById('resetBtn').onclick = () => {
+  log.reset(); n = 0;
+  setText('immVal','—'); setText('immNote','');
+  setText('ctrlMean','—'); setText('grpMean','—'); setText('pctChange','—'); setText('nTrials',0);
+};
+</script>
+</body>
+</html>

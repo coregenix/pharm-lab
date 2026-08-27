@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acetic Acid Writhing Test — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="sub">CNS / Neuropharmacology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Analgesic Activity · Peripheral (Visceral) Pain Model</div>
+    <h1>Acetic Acid-Induced Writhing Test</h1>
+    <p class="principle">0.6% acetic acid is injected intraperitoneally, releasing
+    prostaglandins that irritate the peritoneum and provoke a stereotyped "writhing"
+    response (abdominal contraction, trunk twist, hind-limb extension). Writhes are
+    counted over a 20-minute observation window. Because the response is
+    prostaglandin-mediated, this model is exquisitely sensitive to NSAIDs, unlike
+    the hot plate test.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage">
+        <div id="mouse" style="position:absolute; font-size:2.2rem; left:50%; top:55%; transform:translate(-50%,-50%);">🐁</div>
+        <div class="stage-label">Observation cage · 20 min post-injection</div>
+      </div>
+
+      <div class="field">
+        <label>Treatment (30 min pretreatment, then 0.6% acetic acid 10 mL/kg i.p.)</label>
+        <select id="drug">
+          <option value="saline">Normal saline (control)</option>
+          <option value="aspirin100">Aspirin 100 mg/kg p.o.</option>
+          <option value="aspirin200">Aspirin 200 mg/kg p.o.</option>
+          <option value="diclofenac10">Diclofenac 10 mg/kg p.o.</option>
+          <option value="diclofenac25">Diclofenac 25 mg/kg p.o.</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Inject acetic acid & count writhes</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <div class="readout">
+        <div><span class="big" id="writheVal">—</span> <span class="unit">writhes / 20 min</span></div>
+        <div id="writheNote" style="font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft); margin-top:0.3rem;"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>Writhes</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control mean writhe count</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group mean count</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">% inhibition of writhing</span><span class="v" id="pctChange">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script>
+const drugLabels = {
+  saline: "Saline (control)",
+  aspirin100: "Aspirin 100 mg/kg",
+  aspirin200: "Aspirin 200 mg/kg",
+  diclofenac10: "Diclofenac 10 mg/kg",
+  diclofenac25: "Diclofenac 25 mg/kg"
+};
+
+function computeWrithes(drug){
+  const base = randNormal(38, 4);
+  let factor = 1;
+  if (drug === 'aspirin100') factor = 0.62;
+  if (drug === 'aspirin200') factor = 0.40;
+  if (drug === 'diclofenac10') factor = 0.50;
+  if (drug === 'diclofenac25') factor = 0.28;
+  let w = base * factor + randNormal(0, 2);
+  return clamp(Math.round(w), 0, 60);
+}
+
+const log = new TrialLog(document.getElementById('logBody'), [{key:'n'},{key:'drug'},{key:'writhes'}]);
+let n = 0;
+
+document.getElementById('runBtn').onclick = () => {
+  n++;
+  const drug = document.getElementById('drug').value;
+  const writhes = computeWrithes(drug);
+
+  const mouse = document.getElementById('mouse');
+  mouse.style.transition = 'none';
+  mouse.style.transform = 'translate(-50%,-50%) scale(1)';
+  setTimeout(()=>{
+    mouse.style.transition = 'transform 0.3s ease';
+    mouse.style.transform = 'translate(-50%,-50%) scale(0.85) rotate(8deg)';
+    setTimeout(()=>{ mouse.style.transform = 'translate(-50%,-50%) scale(1)'; }, 300);
+  }, 150);
+
+  setText('writheVal', writhes);
+  setText('writheNote', 'Contractions counted over 20 min observation window');
+
+  log.add({n, drug: drugLabels[drug], writhes});
+
+  const ctrlVals = log.valuesFor('writhes', r => r.drug === 'Saline (control)').map(v=>parseFloat(v));
+  const grpVals = log.valuesFor('writhes', r => r.drug === drugLabels[drug]).map(v=>parseFloat(v));
+  const ctrlM = ctrlVals.length ? round(mean(ctrlVals),1) : null;
+  const grpM = round(mean(grpVals),1);
+
+  setText('ctrlMean', ctrlM !== null ? ctrlM : '—');
+  setText('grpMean', grpM);
+  setText('pctChange', ctrlM ? round(((ctrlM-grpM)/ctrlM)*100,0) + '%' : '—');
+  setText('nTrials', n);
+};
+
+document.getElementById('resetBtn').onclick = () => {
+  log.reset(); n = 0;
+  setText('writheVal','—'); setText('writheNote','');
+  setText('ctrlMean','—'); setText('grpMean','—'); setText('pctChange','—'); setText('nTrials',0);
+};
+</script>
+</body>
+</html>

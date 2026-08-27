@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pylorus Ligation Ulcer — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="sub">Gastrointestinal Pharmacology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Antiulcer Activity · Shay Rat Model</div>
+    <h1>Pylorus Ligation-Induced Ulcer (Shay Model)</h1>
+    <p class="principle">The pylorus is ligated under anesthesia, causing gastric
+    acid and pepsin to accumulate and self-digest the mucosa over 4 h. On
+    sacrifice, gastric juice volume, pH and free/total acidity are measured, and
+    the stomach is scored for an ulcer index. Antisecretory drugs (H2 blockers,
+    PPIs) reduce acid output and ulcer index; antacids raise pH without
+    necessarily reducing volume.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage">
+        <div style="position:absolute; left:50%; top:55%; font-size:2.2rem; transform:translate(-50%,-50%);">🐀</div>
+        <div class="stage-label">Pylorus ligated · 4 h collection</div>
+      </div>
+
+      <div class="field">
+        <label>Treatment (given immediately after ligation)</label>
+        <select id="drug">
+          <option value="saline">Normal saline (control)</option>
+          <option value="ranitidine25">Ranitidine 25 mg/kg i.p.</option>
+          <option value="ranitidine50">Ranitidine 50 mg/kg i.p.</option>
+          <option value="omeprazole10">Omeprazole 10 mg/kg i.p.</option>
+          <option value="omeprazole20">Omeprazole 20 mg/kg i.p.</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Sacrifice at 4 h & analyze gastric juice</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <div class="readout">
+        <div class="stat-row"><span class="k">Gastric volume</span><span class="v" id="vol">—</span></div>
+        <div class="stat-row"><span class="k">pH</span><span class="v" id="ph">—</span></div>
+        <div class="stat-row"><span class="k">Free acidity</span><span class="v" id="acid">—</span></div>
+        <div class="stat-row"><span class="k">Ulcer index</span><span class="v" id="ui">—</span></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>Ulcer index</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control mean ulcer index</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group mean ulcer index</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">% ulcer protection</span><span class="v" id="pctChange">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script>
+const drugLabels = {
+  saline: "Saline (control)",
+  ranitidine25: "Ranitidine 25 mg/kg",
+  ranitidine50: "Ranitidine 50 mg/kg",
+  omeprazole10: "Omeprazole 10 mg/kg",
+  omeprazole20: "Omeprazole 20 mg/kg"
+};
+
+function computeReadings(drug){
+  let volBase = randNormal(6.5, 0.6), phBase = randNormal(2.0, 0.3), acidBase = randNormal(70, 8), uiBase = randNormal(3.2, 0.4);
+  let volF=1, phAdd=0, acidF=1, uiF=1;
+  if (drug === 'ranitidine25') { volF=0.75; phAdd=0.9; acidF=0.55; uiF=0.55; }
+  if (drug === 'ranitidine50') { volF=0.60; phAdd=1.5; acidF=0.35; uiF=0.35; }
+  if (drug === 'omeprazole10') { volF=0.55; phAdd=1.8; acidF=0.30; uiF=0.30; }
+  if (drug === 'omeprazole20') { volF=0.40; phAdd=2.6; acidF=0.15; uiF=0.15; }
+
+  const vol = round(clamp(volBase*volF + randNormal(0,0.3), 1, 8), 1);
+  const ph = round(clamp(phBase + phAdd + randNormal(0,0.2), 1, 7), 1);
+  const acid = round(clamp(acidBase*acidF + randNormal(0,4), 3, 90), 0);
+  const ui = round(clamp(uiBase*uiF + randNormal(0,0.2), 0, 4), 1);
+  return {vol, ph, acid, ui};
+}
+
+const log = new TrialLog(document.getElementById('logBody'), [{key:'n'},{key:'drug'},{key:'ui'}]);
+let n = 0;
+
+document.getElementById('runBtn').onclick = () => {
+  n++;
+  const drug = document.getElementById('drug').value;
+  const {vol, ph, acid, ui} = computeReadings(drug);
+
+  setText('vol', vol + ' mL');
+  setText('ph', ph);
+  setText('acid', acid + ' mEq/L');
+  setText('ui', ui);
+
+  log.add({n, drug: drugLabels[drug], ui});
+
+  const ctrlVals = log.valuesFor('ui', r => r.drug === 'Saline (control)').map(v=>parseFloat(v));
+  const grpVals = log.valuesFor('ui', r => r.drug === drugLabels[drug]).map(v=>parseFloat(v));
+  const ctrlM = ctrlVals.length ? round(mean(ctrlVals),2) : null;
+  const grpM = round(mean(grpVals),2);
+
+  setText('ctrlMean', ctrlM !== null ? ctrlM : '—');
+  setText('grpMean', grpM);
+  setText('pctChange', ctrlM ? round(((ctrlM-grpM)/ctrlM)*100,0) + '%' : '—');
+  setText('nTrials', n);
+};
+
+document.getElementById('resetBtn').onclick = () => {
+  log.reset(); n = 0;
+  setText('vol','—'); setText('ph','—'); setText('acid','—'); setText('ui','—');
+  setText('ctrlMean','—'); setText('grpMean','—'); setText('pctChange','—'); setText('nTrials',0);
+};
+</script>
+</body>
+</html>

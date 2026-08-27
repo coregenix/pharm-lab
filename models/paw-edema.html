@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carrageenan Paw Edema — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="sub">Inflammation & Immunology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Acute Anti-Inflammatory Activity</div>
+    <h1>Carrageenan-Induced Paw Edema</h1>
+    <p class="principle">1% carrageenan (0.1 mL) is injected into the sub-plantar
+    surface of the rat hind paw. Paw volume is measured by plethysmometer at
+    0, 1, 2, 3 and 4 h — a biphasic response (early histamine/serotonin phase,
+    later prostaglandin-mediated phase) that peaks around 3 h. NSAIDs inhibit
+    the later phase most strongly, which is why the 3 h reading is used to
+    calculate % inhibition of edema.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage">
+        <div style="position:absolute; left:50%; top:55%; font-size:2.2rem; transform:translate(-50%,-50%);">🐀</div>
+        <div class="stage-label">Plethysmometer readings · 0–4 h</div>
+      </div>
+
+      <div class="field">
+        <label>Treatment (given 1 h before carrageenan)</label>
+        <select id="drug">
+          <option value="saline">Normal saline (control)</option>
+          <option value="diclofenac5">Diclofenac 5 mg/kg p.o.</option>
+          <option value="diclofenac10">Diclofenac 10 mg/kg p.o.</option>
+          <option value="indomethacin5">Indomethacin 5 mg/kg p.o.</option>
+          <option value="dexamethasone">Dexamethasone 1 mg/kg p.o.</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Inject carrageenan & record time course</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <table class="log" style="margin-top:0.8rem;">
+        <thead><tr><th>0h</th><th>1h</th><th>2h</th><th>3h</th><th>4h</th></tr></thead>
+        <tbody><tr id="courseRow"><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr></tbody>
+      </table>
+      <div style="font-family:var(--mono); font-size:0.7rem; color:var(--ink-soft); margin-top:0.3rem;">paw volume, mL</div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log (3 h reading)</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>Vol 3h (mL)</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control mean edema (3h Δ)</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group mean edema (3h Δ)</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">% inhibition of edema</span><span class="v" id="pctChange">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script>
+const drugLabels = {
+  saline: "Saline (control)",
+  diclofenac5: "Diclofenac 5 mg/kg",
+  diclofenac10: "Diclofenac 10 mg/kg",
+  indomethacin5: "Indomethacin 5 mg/kg",
+  dexamethasone: "Dexamethasone 1 mg/kg"
+};
+
+// returns {course:[v0..v4], delta3h}
+function computeCourse(drug){
+  const baseline = round(randNormal(1.0, 0.03), 2);
+  let inhib = 0; // fraction inhibition of peak edema
+  if (drug === 'diclofenac5') inhib = 0.35;
+  if (drug === 'diclofenac10') inhib = 0.55;
+  if (drug === 'indomethacin5') inhib = 0.60;
+  if (drug === 'dexamethasone') inhib = 0.70;
+
+  // shape of edema increase over time (fraction of max at each hour), peak at 3h
+  const shape = [0, 0.55, 0.85, 1.0, 0.9];
+  const maxIncrease = 0.55; // mL at peak in control
+  const course = shape.map((s,i) => {
+    if (i === 0) return baseline;
+    const increase = maxIncrease * s * (1 - inhib) + randNormal(0, 0.02);
+    return round(baseline + Math.max(0, increase), 2);
+  });
+  const delta3h = round(course[3] - baseline, 2);
+  return {course, delta3h};
+}
+
+const log = new TrialLog(document.getElementById('logBody'), [{key:'n'},{key:'drug'},{key:'delta'}]);
+let n = 0;
+
+document.getElementById('runBtn').onclick = () => {
+  n++;
+  const drug = document.getElementById('drug').value;
+  const {course, delta3h} = computeCourse(drug);
+
+  const row = document.getElementById('courseRow');
+  row.innerHTML = course.map(v => `<td>${v}</td>`).join('');
+
+  log.add({n, drug: drugLabels[drug], delta: delta3h});
+
+  const ctrlVals = log.valuesFor('delta', r => r.drug === 'Saline (control)').map(v=>parseFloat(v));
+  const grpVals = log.valuesFor('delta', r => r.drug === drugLabels[drug]).map(v=>parseFloat(v));
+  const ctrlM = ctrlVals.length ? round(mean(ctrlVals),2) : null;
+  const grpM = round(mean(grpVals),2);
+
+  setText('ctrlMean', ctrlM !== null ? ctrlM + ' mL' : '—');
+  setText('grpMean', grpM + ' mL');
+  setText('pctChange', ctrlM ? round(((ctrlM-grpM)/ctrlM)*100,0) + '%' : '—');
+  setText('nTrials', n);
+};
+
+document.getElementById('resetBtn').onclick = () => {
+  log.reset(); n = 0;
+  document.getElementById('courseRow').innerHTML = '<td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>';
+  setText('ctrlMean','—'); setText('grpMean','—'); setText('pctChange','—'); setText('nTrials',0);
+};
+</script>
+</body>
+</html>

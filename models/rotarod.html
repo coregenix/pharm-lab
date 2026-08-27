@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rotarod Test — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="sub">CNS / Neuropharmacology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Motor Coordination · Sedative Screening Model</div>
+    <h1>Rotarod Test</h1>
+    <p class="principle">A mouse/rat is placed on a rotating rod (typically 16–25
+    rpm) and the time it stays on before falling is recorded (cut-off 180 s).
+    Only animals that pass a pretest are used. Muscle relaxants and sedatives
+    (benzodiazepines, high-dose antihistamines) shorten fall latency by impairing
+    motor coordination — useful for detecting unwanted CNS depression in new
+    compounds as well as screening muscle relaxants.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage" style="display:flex; align-items:center; justify-content:center;">
+        <div style="width:140px; height:26px; background:repeating-linear-gradient(90deg,#3a4a3a,#3a4a3a 8px,#2a3a2a 8px,#2a3a2a 16px); border-radius:13px; position:relative;">
+          <div id="mouse" style="position:absolute; top:-22px; left:60px; font-size:1.6rem;">🐭</div>
+        </div>
+      </div>
+      <div class="stage-label" style="position:static; text-align:center; padding-bottom:0.4rem;">Rotarod · 16 rpm · cut-off 180 s</div>
+
+      <div class="field">
+        <label>Treatment</label>
+        <select id="drug">
+          <option value="saline">Normal saline (control)</option>
+          <option value="diazepam1">Diazepam 1 mg/kg i.p.</option>
+          <option value="diazepam3">Diazepam 3 mg/kg i.p.</option>
+          <option value="chlorpromazine">Chlorpromazine 5 mg/kg i.p.</option>
+          <option value="modafinil">Modafinil 30 mg/kg p.o. (stimulant)</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Place on rod & time to fall</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <div class="readout">
+        <div><span class="big" id="fallVal">—</span> <span class="unit">s on rod</span></div>
+        <div id="fallNote" style="font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft); margin-top:0.3rem;"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>Fall latency (s)</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control mean latency</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group mean latency</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">Interpretation</span><span class="v" id="interp">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script>
+const drugLabels = {
+  saline: "Saline (control)",
+  diazepam1: "Diazepam 1 mg/kg",
+  diazepam3: "Diazepam 3 mg/kg",
+  chlorpromazine: "Chlorpromazine 5 mg/kg",
+  modafinil: "Modafinil 30 mg/kg"
+};
+
+function computeFall(drug){
+  const base = randNormal(150, 15);
+  let factor = 1;
+  if (drug === 'diazepam1') factor = 0.55;
+  if (drug === 'diazepam3') factor = 0.22;
+  if (drug === 'chlorpromazine') factor = 0.40;
+  if (drug === 'modafinil') factor = 1.05;
+  let t = base * factor + randNormal(0, 8);
+  return clamp(Math.round(t), 3, 180);
+}
+
+const log = new TrialLog(document.getElementById('logBody'), [{key:'n'},{key:'drug'},{key:'fall'}]);
+let n = 0;
+
+document.getElementById('runBtn').onclick = () => {
+  n++;
+  const drug = document.getElementById('drug').value;
+  const fall = computeFall(drug);
+  const cutoff = fall >= 180;
+
+  setText('fallVal', fall);
+  setText('fallNote', cutoff ? 'Cut-off reached — normal coordination maintained' : 'Animal fell from rod');
+
+  log.add({n, drug: drugLabels[drug], fall: fall + (cutoff ? ' (cutoff)' : '')});
+
+  const ctrlVals = log.valuesFor('fall', r => r.drug === 'Saline (control)').map(v=>parseFloat(v));
+  const grpVals = log.valuesFor('fall', r => r.drug === drugLabels[drug]).map(v=>parseFloat(v));
+  const ctrlM = ctrlVals.length ? round(mean(ctrlVals),1) : null;
+  const grpM = round(mean(grpVals),1);
+
+  setText('ctrlMean', ctrlM !== null ? ctrlM + ' s' : '—');
+  setText('grpMean', grpM + ' s');
+  let interp = '—';
+  if (ctrlM !== null) interp = grpM < ctrlM * 0.8 ? 'Motor impairment' : (grpM > ctrlM * 1.15 ? 'Improved / stimulant' : 'No clear effect');
+  setText('interp', interp);
+  setText('nTrials', n);
+};
+
+document.getElementById('resetBtn').onclick = () => {
+  log.reset(); n = 0;
+  setText('fallVal','—'); setText('fallNote','');
+  setText('ctrlMean','—'); setText('grpMean','—'); setText('interp','—'); setText('nTrials',0);
+};
+</script>
+</body>
+</html>
