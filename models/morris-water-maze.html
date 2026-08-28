@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Morris Water Maze — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="brand-credit"><b>COREGENIX</b> — Made by Sant Kumar</span>
+  <span class="sub">CNS / Neuropharmacology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Learning & Memory · Spatial Memory Model</div>
+    <h1>Morris Water Maze</h1>
+    <p class="principle">A rodent swims in a circular pool of opaque water to find a submerged, hidden escape platform, using distal spatial cues. Over repeated trials, escape latency normally falls as spatial learning improves. Amnesic agents (scopolamine) impair learning and increase latency; nootropics improve it, even against a scopolamine-induced deficit.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage">
+        <div class="instr-pool"><div class="platform"></div></div><div class="instr-standard-mouse">🐁</div>
+        <div class="stage-label">Circular pool · hidden platform trial</div>
+      </div>
+
+      <div class="field">
+        <label>Treatment</label>
+        <select id="drug">
+          <option value="saline">Normal saline (control)</option>
+          <option value="scopolamine">Scopolamine 1 mg/kg (amnesic)</option>
+          <option value="piracetam200">Piracetam 200 mg/kg</option>
+          <option value="piracetam400">Piracetam 400 mg/kg</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Release & time to reach hidden platform</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <div class="readout">
+        <div><span class="big" id="primaryVal">—</span> <span class="unit">s escape latency</span></div>
+        <div id="primaryNote" style="font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft); margin-top:0.3rem;"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>Latency (s)</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control mean</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group mean</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">% change vs control</span><span class="v" id="pctChange">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script src="../assets/js/sim-engine.js"></script>
+<script>
+SimEngine.numeric({
+  drugLabels: { saline: "Normal saline (control)", scopolamine: "Scopolamine 1 mg/kg (amnesic)", piracetam200: "Piracetam 200 mg/kg", piracetam400: "Piracetam 400 mg/kg" },
+  controlKey: 'saline',
+  baselineMean: 28,
+  baselineSD: 4,
+  multipliers: { saline: 1, scopolamine: 1.9, piracetam200: 0.75, piracetam400: 0.58 },
+  noiseSD: 1.6,
+  clampMin: 5,
+  clampMax: 90,
+  
+  decimals: 0,
+  unitSuffix: ' s',
+  pctMode: 'signed'
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learned Helplessness — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="brand-credit"><b>COREGENIX</b> — Made by Sant Kumar</span>
+  <span class="sub">CNS / Neuropharmacology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Antidepressant Activity · Chronic Stress Model</div>
+    <h1>Learned Helplessness</h1>
+    <p class="principle">Animals first receive unavoidable, inescapable shocks over 1-2 days. When later given the chance to escape a shock (shuttle-box, escapable trials), pre-exposed animals show repeated escape failures, modeling depressive helplessness. Chronic antidepressant treatment reduces the number of escape failures on re-test.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage">
+        <div class="instr-shuttlebox"><div class="comp"></div><div class="comp safe"></div></div><div class="instr-standard-mouse">🐁</div>
+        <div class="stage-label">Shuttle box · 30 escapable trials</div>
+      </div>
+
+      <div class="field">
+        <label>Treatment</label>
+        <select id="drug">
+          <option value="saline">Vehicle, chronic (control)</option>
+          <option value="imipramine10">Imipramine 10 mg/kg, chronic</option>
+          <option value="imipramine20">Imipramine 20 mg/kg, chronic</option>
+          <option value="fluoxetine10">Fluoxetine 10 mg/kg, chronic</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Run 30 escapable trials & count failures</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <div class="readout">
+        <div><span class="big" id="primaryVal">—</span> <span class="unit">escape failures / 30 trials</span></div>
+        <div id="primaryNote" style="font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft); margin-top:0.3rem;"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>Failures</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control mean</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group mean</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">% reduction in failures</span><span class="v" id="pctChange">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script src="../assets/js/sim-engine.js"></script>
+<script>
+SimEngine.numeric({
+  drugLabels: { saline: "Vehicle, chronic (control)", imipramine10: "Imipramine 10 mg/kg, chronic", imipramine20: "Imipramine 20 mg/kg, chronic", fluoxetine10: "Fluoxetine 10 mg/kg, chronic" },
+  controlKey: 'saline',
+  baselineMean: 20,
+  baselineSD: 2.5,
+  multipliers: { saline: 1, imipramine10: 0.55, imipramine20: 0.35, fluoxetine10: 0.6 },
+  noiseSD: 1.0,
+  clampMin: 0,
+  clampMax: 30,
+  
+  decimals: 0,
+  unitSuffix: '',
+  pctMode: 'inhibition'
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formalin-Induced Paw Licking — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="brand-credit"><b>COREGENIX</b> — Made by Sant Kumar</span>
+  <span class="sub">CNS / Neuropharmacology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Analgesic Activity · Tonic Inflammatory Pain Model</div>
+    <h1>Formalin-Induced Paw Licking</h1>
+    <p class="principle">A dilute formalin solution (2.5%, 20 uL) is injected into the dorsal paw, producing a biphasic nociceptive response: an early neurogenic phase (0-5 min) and a later inflammatory phase (15-30 min). Paw-licking time during the late phase is scored, since it is the phase most sensitive to NSAIDs and centrally-acting analgesics.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage">
+        <div class="instr-cage"><div class="bars"></div></div><div class="instr-standard-mouse">🐁</div>
+        <div class="stage-label">Late phase scoring · 15-30 min post-injection</div>
+      </div>
+
+      <div class="field">
+        <label>Treatment</label>
+        <select id="drug">
+          <option value="saline">Normal saline (control)</option>
+          <option value="aspirin150">Aspirin 150 mg/kg</option>
+          <option value="diclofenac10">Diclofenac 10 mg/kg</option>
+          <option value="morphine2">Morphine 2 mg/kg</option>
+          <option value="morphine5">Morphine 5 mg/kg</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Inject formalin & score late-phase licking</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <div class="readout">
+        <div><span class="big" id="primaryVal">—</span> <span class="unit">s licking (late phase)</span></div>
+        <div id="primaryNote" style="font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft); margin-top:0.3rem;"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>Licking time (s)</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control mean</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group mean</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">% inhibition of licking</span><span class="v" id="pctChange">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script src="../assets/js/sim-engine.js"></script>
+<script>
+SimEngine.numeric({
+  drugLabels: { saline: "Normal saline (control)", aspirin150: "Aspirin 150 mg/kg", diclofenac10: "Diclofenac 10 mg/kg", morphine2: "Morphine 2 mg/kg", morphine5: "Morphine 5 mg/kg" },
+  controlKey: 'saline',
+  baselineMean: 110,
+  baselineSD: 10,
+  multipliers: { saline: 1, aspirin150: 0.55, diclofenac10: 0.45, morphine2: 0.3, morphine5: 0.15 },
+  noiseSD: 4.0,
+  clampMin: 10,
+  clampMax: 180,
+  
+  decimals: 0,
+  unitSuffix: ' s',
+  pctMode: 'inhibition'
+});
+</script>
+</body>
+</html>

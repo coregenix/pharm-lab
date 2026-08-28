@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amphetamine-Induced Stereotypy — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="brand-credit"><b>COREGENIX</b> — Made by Sant Kumar</span>
+  <span class="sub">CNS / Neuropharmacology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Antipsychotic Activity · Dopamine-Releasing Agent Model</div>
+    <h1>Amphetamine-Induced Stereotypy</h1>
+    <p class="principle">Amphetamine releases synaptic dopamine and induces stereotyped behavior - repetitive sniffing, licking, gnawing - scored on a 0-4 stereotypy scale at intervals after dosing. Typical antipsychotics attenuate the stereotypy score, complementing the apomorphine model which works via direct receptor agonism rather than dopamine release.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage">
+        <div class="instr-cage"><div class="bars"></div></div><div class="instr-standard-mouse">🐁</div>
+        <div class="stage-label">Observation cage · scored q10min for 60 min</div>
+      </div>
+
+      <div class="field">
+        <label>Treatment</label>
+        <select id="drug">
+          <option value="amph">Amphetamine 5 mg/kg alone (control)</option>
+          <option value="halo_low">+ Haloperidol 0.1 mg/kg</option>
+          <option value="halo_high">+ Haloperidol 0.5 mg/kg</option>
+          <option value="clozapine">+ Clozapine 5 mg/kg</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Dose amphetamine & score stereotypy</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <div class="readout">
+        <div><span class="big" id="primaryVal">—</span> <span class="unit">stereotypy score (0-4)</span></div>
+        <div id="primaryNote" style="font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft); margin-top:0.3rem;"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>Score</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control mean</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group mean</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">% suppression of stereotypy</span><span class="v" id="pctChange">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script src="../assets/js/sim-engine.js"></script>
+<script>
+SimEngine.numeric({
+  drugLabels: { amph: "Amphetamine 5 mg/kg alone (control)", halo_low: "+ Haloperidol 0.1 mg/kg", halo_high: "+ Haloperidol 0.5 mg/kg", clozapine: "+ Clozapine 5 mg/kg" },
+  controlKey: 'amph',
+  baselineMean: 3.1,
+  baselineSD: 0.4,
+  multipliers: { amph: 1, halo_low: 0.6, halo_high: 0.3, clozapine: 0.45 },
+  noiseSD: 0.16,
+  clampMin: 0,
+  clampMax: 4,
+  
+  decimals: 1,
+  unitSuffix: '',
+  pctMode: 'inhibition'
+});
+</script>
+</body>
+</html>

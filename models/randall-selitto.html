@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Randall-Selitto Test — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="brand-credit"><b>COREGENIX</b> — Made by Sant Kumar</span>
+  <span class="sub">CNS / Neuropharmacology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Analgesic Activity · Mechanical Nociception Model</div>
+    <h1>Randall-Selitto Test</h1>
+    <p class="principle">Increasing mechanical pressure is applied to the hind paw (often pre-inflamed with carrageenan) via an analgesiometer until the animal vocalizes or withdraws. The pressure threshold (grams) is recorded, and is the standard model for testing analgesics against hyperalgesia of inflamed tissue.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage">
+        <div class="instr-cage"><div class="bars"></div></div><div class="instr-standard-mouse">🐀</div>
+        <div class="stage-label">Randall-Selitto analgesiometer</div>
+      </div>
+
+      <div class="field">
+        <label>Treatment</label>
+        <select id="drug">
+          <option value="saline">Normal saline (control)</option>
+          <option value="aspirin150">Aspirin 150 mg/kg</option>
+          <option value="diclofenac10">Diclofenac 10 mg/kg</option>
+          <option value="morphine2">Morphine 2 mg/kg</option>
+          <option value="morphine5">Morphine 5 mg/kg</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Apply increasing pressure & record threshold</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <div class="readout">
+        <div><span class="big" id="primaryVal">—</span> <span class="unit">g pressure threshold</span></div>
+        <div id="primaryNote" style="font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft); margin-top:0.3rem;"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>Threshold (g)</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control mean</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group mean</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">% change vs control</span><span class="v" id="pctChange">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script src="../assets/js/sim-engine.js"></script>
+<script>
+SimEngine.numeric({
+  drugLabels: { saline: "Normal saline (control)", aspirin150: "Aspirin 150 mg/kg", diclofenac10: "Diclofenac 10 mg/kg", morphine2: "Morphine 2 mg/kg", morphine5: "Morphine 5 mg/kg" },
+  controlKey: 'saline',
+  baselineMean: 95,
+  baselineSD: 8,
+  multipliers: { saline: 1, aspirin150: 1.25, diclofenac10: 1.5, morphine2: 1.7, morphine5: 2.1 },
+  noiseSD: 3.2,
+  clampMin: 40,
+  clampMax: 300,
+  
+  decimals: 0,
+  unitSuffix: ' g',
+  pctMode: 'signed'
+});
+</script>
+</body>
+</html>

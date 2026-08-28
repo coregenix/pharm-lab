@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Passive (Step-Through) Avoidance — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="brand-credit"><b>COREGENIX</b> — Made by Sant Kumar</span>
+  <span class="sub">CNS / Neuropharmacology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Learning & Memory · Aversive Retention Model</div>
+    <h1>Passive (Step-Through) Avoidance</h1>
+    <p class="principle">An animal receives a mild foot-shock upon stepping from a lit compartment into a preferred dark one during training. On the retention test (24 h later), the latency to re-enter the dark compartment reflects how well the aversive association was learned and retained. Amnesic agents shorten retention latency; nootropics lengthen it.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage">
+        <div class="instr-lightdark"><div class="light"></div><div class="dark"></div></div><div class="instr-standard-mouse">🐁</div>
+        <div class="stage-label">Step-through box · 24 h retention test</div>
+      </div>
+
+      <div class="field">
+        <label>Treatment</label>
+        <select id="drug">
+          <option value="saline">Normal saline (control)</option>
+          <option value="scopolamine">Scopolamine 1 mg/kg (amnesic)</option>
+          <option value="piracetam200">Piracetam 200 mg/kg</option>
+          <option value="donepezil">Donepezil 1 mg/kg</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Run 24 h retention trial</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <div class="readout">
+        <div><span class="big" id="primaryVal">—</span> <span class="unit">s step-through latency</span></div>
+        <div id="primaryNote" style="font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft); margin-top:0.3rem;"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>Latency (s)</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control mean</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group mean</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">% change vs control</span><span class="v" id="pctChange">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script src="../assets/js/sim-engine.js"></script>
+<script>
+SimEngine.numeric({
+  drugLabels: { saline: "Normal saline (control)", scopolamine: "Scopolamine 1 mg/kg (amnesic)", piracetam200: "Piracetam 200 mg/kg", donepezil: "Donepezil 1 mg/kg" },
+  controlKey: 'saline',
+  baselineMean: 140,
+  baselineSD: 15,
+  multipliers: { saline: 1, scopolamine: 0.35, piracetam200: 1.35, donepezil: 1.5 },
+  noiseSD: 6.0,
+  clampMin: 5,
+  clampMax: 300,
+  cutoff: 300,
+  decimals: 0,
+  unitSuffix: ' s',
+  pctMode: 'signed'
+});
+</script>
+</body>
+</html>

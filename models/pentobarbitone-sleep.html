@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pentobarbitone-Induced Sleeping Time — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="brand-credit"><b>COREGENIX</b> — Made by Sant Kumar</span>
+  <span class="sub">CNS / Neuropharmacology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Sedative / Hypnotic Activity Model</div>
+    <h1>Pentobarbitone-Induced Sleeping Time</h1>
+    <p class="principle">A sub-hypnotic-potentiating dose of pentobarbitone is given, and duration of loss of righting reflex ('sleeping time') is measured. CNS depressants potentiate (prolong) pentobarbitone sleeping time; stimulants and enzyme inducers shorten it - a classic screen for CNS depressant/stimulant activity of a new compound.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage">
+        <div class="instr-cage"><div class="bars"></div></div><div class="instr-standard-mouse" style="top:70%; transform:translate(-50%,-50%) rotate(90deg);">🐁</div>
+        <div class="stage-label">Loss of righting reflex, timed to recovery</div>
+      </div>
+
+      <div class="field">
+        <label>Treatment</label>
+        <select id="drug">
+          <option value="pento">Pentobarbitone 40 mg/kg alone (control)</option>
+          <option value="diazepam1">+ Diazepam 1 mg/kg</option>
+          <option value="diazepam3">+ Diazepam 3 mg/kg</option>
+          <option value="caffeine">+ Caffeine 20 mg/kg</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Dose pentobarbitone & time to righting reflex</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <div class="readout">
+        <div><span class="big" id="primaryVal">—</span> <span class="unit">min sleeping time</span></div>
+        <div id="primaryNote" style="font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft); margin-top:0.3rem;"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>Sleep time (min)</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control mean</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group mean</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">% change vs control</span><span class="v" id="pctChange">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script src="../assets/js/sim-engine.js"></script>
+<script>
+SimEngine.numeric({
+  drugLabels: { pento: "Pentobarbitone 40 mg/kg alone (control)", diazepam1: "+ Diazepam 1 mg/kg", diazepam3: "+ Diazepam 3 mg/kg", caffeine: "+ Caffeine 20 mg/kg" },
+  controlKey: 'pento',
+  baselineMean: 28,
+  baselineSD: 4,
+  multipliers: { pento: 1, diazepam1: 1.6, diazepam3: 2.3, caffeine: 0.55 },
+  noiseSD: 1.6,
+  clampMin: 5,
+  clampMax: 180,
+  
+  decimals: 0,
+  unitSuffix: ' min',
+  pctMode: 'signed'
+});
+</script>
+</body>
+</html>

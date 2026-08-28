@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MPTP Model — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="brand-credit"><b>COREGENIX</b> — Made by Sant Kumar</span>
+  <span class="sub">CNS / Neuropharmacology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Parkinsonism · Selective Dopaminergic Neurotoxin Model</div>
+    <h1>MPTP Model</h1>
+    <p class="principle">MPTP is converted by MAO-B (in glia) to MPP+, which is selectively taken up by dopamine transporters into nigral neurons, where it poisons mitochondrial complex I, closely mimicking idiopathic Parkinson's disease pathology. Spontaneous locomotor activity, markedly reduced after MPTP, is used to gauge neuroprotection by candidate agents (notably MAO-B inhibitors, which block MPTP's own bioactivation).</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage">
+        <div class="instr-chamber"></div><div class="instr-standard-mouse">🐁</div>
+        <div class="stage-label">Activity chamber · 10 min, post-MPTP series</div>
+      </div>
+
+      <div class="field">
+        <label>Treatment</label>
+        <select id="drug">
+          <option value="mptp">MPTP, vehicle (control)</option>
+          <option value="selegiline">+ Selegiline 5 mg/kg (MAO-B inhibitor)</option>
+          <option value="levodopa">+ Levodopa 50 mg/kg</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Record locomotor activity</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <div class="readout">
+        <div><span class="big" id="primaryVal">—</span> <span class="unit">beam breaks / 10 min</span></div>
+        <div id="primaryNote" style="font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft); margin-top:0.3rem;"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>Counts</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control mean</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group mean</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">% change vs control</span><span class="v" id="pctChange">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script src="../assets/js/sim-engine.js"></script>
+<script>
+SimEngine.numeric({
+  drugLabels: { mptp: "MPTP, vehicle (control)", selegiline: "+ Selegiline 5 mg/kg (MAO-B inhibitor)", levodopa: "+ Levodopa 50 mg/kg" },
+  controlKey: 'mptp',
+  baselineMean: 95,
+  baselineSD: 15,
+  multipliers: { mptp: 1, selegiline: 2.6, levodopa: 1.9 },
+  noiseSD: 6.0,
+  clampMin: 10,
+  clampMax: 350,
+  
+  decimals: 0,
+  unitSuffix: '',
+  pctMode: 'signed'
+});
+</script>
+</body>
+</html>

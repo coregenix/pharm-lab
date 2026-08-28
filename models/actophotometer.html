@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Actophotometer — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="brand-credit"><b>COREGENIX</b> — Made by Sant Kumar</span>
+  <span class="sub">CNS / Neuropharmacology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Locomotor Activity · General CNS Screening</div>
+    <h1>Actophotometer Test</h1>
+    <p class="principle">The animal is placed in a chamber lined with
+    photocell/beam pairs; each beam interruption from spontaneous movement is
+    counted over a 10-minute session. This is a general screen for CNS
+    depressant or stimulant activity of a compound — a useful baseline test to
+    run before more specific behavioral assays like EPM or rotarod, since gross
+    sedation can confound their interpretation.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage">
+        <div class="instr-chamber"></div>
+        <div id="mouse" style="position:absolute; font-size:1.7rem; left:30%; top:50%; transform:translate(-50%,-50%); z-index:2;">🐁</div>
+        <div class="stage-label">Photocell activity chamber · 10 min session</div>
+      </div>
+
+      <div class="field">
+        <label>Treatment</label>
+        <select id="drug">
+          <option value="saline">Normal saline (control)</option>
+          <option value="diazepam1">Diazepam 1 mg/kg i.p.</option>
+          <option value="diazepam3">Diazepam 3 mg/kg i.p.</option>
+          <option value="amphetamine">Amphetamine 2 mg/kg i.p. (stimulant)</option>
+          <option value="chlorpromazine">Chlorpromazine 5 mg/kg i.p.</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Start 10-min session</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <div class="readout">
+        <div><span class="big" id="countVal">—</span> <span class="unit">beam breaks / 10 min</span></div>
+        <div id="countNote" style="font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft); margin-top:0.3rem;"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>Counts</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control mean count</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group mean count</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">Interpretation</span><span class="v" id="interp">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script>
+const drugLabels = {
+  saline: "Saline (control)",
+  diazepam1: "Diazepam 1 mg/kg",
+  diazepam3: "Diazepam 3 mg/kg",
+  amphetamine: "Amphetamine 2 mg/kg",
+  chlorpromazine: "Chlorpromazine 5 mg/kg"
+};
+
+function computeCount(drug){
+  const base = randNormal(310, 25);
+  let factor = 1;
+  if (drug === 'diazepam1') factor = 0.65;
+  if (drug === 'diazepam3') factor = 0.35;
+  if (drug === 'amphetamine') factor = 1.9;
+  if (drug === 'chlorpromazine') factor = 0.30;
+  let c = base * factor + randNormal(0, 15);
+  return clamp(Math.round(c), 10, 700);
+}
+
+const log = new TrialLog(document.getElementById('logBody'), [{key:'n'},{key:'drug'},{key:'count'}]);
+let n = 0;
+
+document.getElementById('runBtn').onclick = () => {
+  n++;
+  const drug = document.getElementById('drug').value;
+  const count = computeCount(drug);
+
+  const mouse = document.getElementById('mouse');
+  const speed = clamp(count / 150, 0.3, 4);
+  mouse.style.transition = `left ${2/speed}s linear`;
+  mouse.style.left = mouse.style.left === '70%' ? '30%' : '70%';
+
+  setText('countVal', count);
+  setText('countNote', 'Photobeam interruptions over 10 min');
+
+  log.add({n, drug: drugLabels[drug], count});
+
+  const ctrlVals = log.valuesFor('count', r => r.drug === 'Saline (control)').map(v=>parseFloat(v));
+  const grpVals = log.valuesFor('count', r => r.drug === drugLabels[drug]).map(v=>parseFloat(v));
+  const ctrlM = ctrlVals.length ? round(mean(ctrlVals),0) : null;
+  const grpM = round(mean(grpVals),0);
+
+  setText('ctrlMean', ctrlM !== null ? ctrlM : '—');
+  setText('grpMean', grpM);
+  let interp = '—';
+  if (ctrlM !== null) interp = grpM < ctrlM * 0.75 ? 'CNS depressant activity' : (grpM > ctrlM * 1.3 ? 'CNS stimulant activity' : 'No clear effect');
+  setText('interp', interp);
+  setText('nTrials', n);
+};
+
+document.getElementById('resetBtn').onclick = () => {
+  log.reset(); n = 0;
+  setText('countVal','—'); setText('countNote','');
+  setText('ctrlMean','—'); setText('grpMean','—'); setText('interp','—'); setText('nTrials',0);
+};
+</script>
+</body>
+</html>

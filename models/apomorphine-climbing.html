@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apomorphine-Induced Climbing — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="brand-credit"><b>COREGENIX</b> — Made by Sant Kumar</span>
+  <span class="sub">CNS / Neuropharmacology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Antipsychotic Activity · Dopamine Agonist Model</div>
+    <h1>Apomorphine-Induced Climbing</h1>
+    <p class="principle">Apomorphine, a direct dopamine D1/D2 agonist, induces stereotyped climbing behavior in mice placed in a wire-mesh cage, reflecting mesolimbic/striatal dopamine activation. A climbing score (0 = all four paws on floor, to 6 = continuous climbing) is recorded 10-20 min post-apomorphine. Antipsychotics suppress apomorphine-induced climbing dose-dependently.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage">
+        <div class="instr-cage"><div class="bars"></div></div><div class="instr-standard-mouse" style="top:35%;">🐁</div>
+        <div class="stage-label">Wire-mesh cage · scored 10-20 min post-apomorphine</div>
+      </div>
+
+      <div class="field">
+        <label>Treatment</label>
+        <select id="drug">
+          <option value="apo">Apomorphine 1.5 mg/kg alone (control)</option>
+          <option value="halo_low">+ Haloperidol 0.1 mg/kg</option>
+          <option value="halo_high">+ Haloperidol 0.5 mg/kg</option>
+          <option value="chlorpromazine">+ Chlorpromazine 3 mg/kg</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Challenge with apomorphine & score climbing</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <div class="readout">
+        <div><span class="big" id="primaryVal">—</span> <span class="unit">climbing score (0-6)</span></div>
+        <div id="primaryNote" style="font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft); margin-top:0.3rem;"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>Score</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control mean</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group mean</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">% suppression of climbing</span><span class="v" id="pctChange">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script src="../assets/js/sim-engine.js"></script>
+<script>
+SimEngine.numeric({
+  drugLabels: { apo: "Apomorphine 1.5 mg/kg alone (control)", halo_low: "+ Haloperidol 0.1 mg/kg", halo_high: "+ Haloperidol 0.5 mg/kg", chlorpromazine: "+ Chlorpromazine 3 mg/kg" },
+  controlKey: 'apo',
+  baselineMean: 4.2,
+  baselineSD: 0.5,
+  multipliers: { apo: 1, halo_low: 0.65, halo_high: 0.25, chlorpromazine: 0.4 },
+  noiseSD: 0.2,
+  clampMin: 0,
+  clampMax: 6,
+  
+  decimals: 1,
+  unitSuffix: '',
+  pctMode: 'inhibition'
+});
+</script>
+</body>
+</html>

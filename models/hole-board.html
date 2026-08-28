@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hole Board Test — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="brand-credit"><b>COREGENIX</b> — Made by Sant Kumar</span>
+  <span class="sub">CNS / Neuropharmacology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Anxiolytic Activity · Exploratory Behavior Model</div>
+    <h1>Hole Board Test</h1>
+    <p class="principle">A flat board perforated with equally spaced holes is placed in an open arena; the number of head-dips into the holes over a 5-min session is scored as a measure of exploratory drive versus anxiety, and is also sensitive to sedation. Anxiolytics increase head-dipping; sedatives and CNS depressants suppress it.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage">
+        <div class="instr-holeboard"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="instr-standard-mouse">🐁</div>
+        <div class="stage-label">Hole board · 5 min session</div>
+      </div>
+
+      <div class="field">
+        <label>Treatment</label>
+        <select id="drug">
+          <option value="saline">Normal saline (control)</option>
+          <option value="diazepam0_5">Diazepam 0.5 mg/kg</option>
+          <option value="diazepam2">Diazepam 2 mg/kg (sedating dose)</option>
+          <option value="chlorpromazine">Chlorpromazine 5 mg/kg</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Place on board & count head-dips</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <div class="readout">
+        <div><span class="big" id="primaryVal">—</span> <span class="unit">head-dips / 5 min</span></div>
+        <div id="primaryNote" style="font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft); margin-top:0.3rem;"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>Head-dips</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control mean</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group mean</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">% change vs control</span><span class="v" id="pctChange">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script src="../assets/js/sim-engine.js"></script>
+<script>
+SimEngine.numeric({
+  drugLabels: { saline: "Normal saline (control)", diazepam0_5: "Diazepam 0.5 mg/kg", diazepam2: "Diazepam 2 mg/kg (sedating dose)", chlorpromazine: "Chlorpromazine 5 mg/kg" },
+  controlKey: 'saline',
+  baselineMean: 18,
+  baselineSD: 2.5,
+  multipliers: { saline: 1, diazepam0_5: 1.4, diazepam2: 0.4, chlorpromazine: 0.3 },
+  noiseSD: 1.0,
+  clampMin: 0,
+  clampMax: 45,
+  
+  decimals: 0,
+  unitSuffix: '',
+  pctMode: 'signed'
+});
+</script>
+</body>
+</html>

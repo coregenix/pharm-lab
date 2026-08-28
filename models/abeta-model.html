@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A-beta-Induced Model — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="brand-credit"><b>COREGENIX</b> — Made by Sant Kumar</span>
+  <span class="sub">CNS / Neuropharmacology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Alzheimer's Disease · Amyloid-Beta Toxicity Model</div>
+    <h1>A-beta-Induced Model</h1>
+    <p class="principle">Intracerebroventricular injection of aggregated amyloid-beta (1-42) peptide directly reproduces the toxic protein pathology central to Alzheimer's disease, causing synaptic dysfunction and working-memory deficits. Y-maze spontaneous alternation, impaired by amyloid-beta, is used to assess candidate disease-modifying therapies.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage">
+        <div class="instr-ymaze"><div class="arm a1"></div><div class="arm a2"></div><div class="arm a3"></div></div><div class="instr-standard-mouse">🐁</div>
+        <div class="stage-label">Y-maze · post amyloid-beta(1-42) i.c.v. injection</div>
+      </div>
+
+      <div class="field">
+        <label>Treatment</label>
+        <select id="drug">
+          <option value="abeta">Amyloid-beta(1-42) i.c.v. alone (control)</option>
+          <option value="donepezil">+ Donepezil 1 mg/kg</option>
+          <option value="curcumin">+ Curcumin 100 mg/kg (antioxidant)</option>
+          <option value="memantine">+ Memantine 10 mg/kg</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Place in maze & score alternations</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <div class="readout">
+        <div><span class="big" id="primaryVal">—</span> <span class="unit">% spontaneous alternation</span></div>
+        <div id="primaryNote" style="font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft); margin-top:0.3rem;"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>% Alternation</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control mean</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group mean</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">% change vs control</span><span class="v" id="pctChange">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script src="../assets/js/sim-engine.js"></script>
+<script>
+SimEngine.numeric({
+  drugLabels: { abeta: "Amyloid-beta(1-42) i.c.v. alone (control)", donepezil: "+ Donepezil 1 mg/kg", curcumin: "+ Curcumin 100 mg/kg (antioxidant)", memantine: "+ Memantine 10 mg/kg" },
+  controlKey: 'abeta',
+  baselineMean: 48,
+  baselineSD: 5,
+  multipliers: { abeta: 1, donepezil: 1.3, curcumin: 1.25, memantine: 1.35 },
+  noiseSD: 2.0,
+  clampMin: 20,
+  clampMax: 90,
+  
+  decimals: 1,
+  unitSuffix: '%',
+  pctMode: 'signed'
+});
+</script>
+</body>
+</html>

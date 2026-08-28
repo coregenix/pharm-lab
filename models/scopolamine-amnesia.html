@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scopolamine-Induced Amnesia — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="brand-credit"><b>COREGENIX</b> — Made by Sant Kumar</span>
+  <span class="sub">CNS / Neuropharmacology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Alzheimer's Disease · Cholinergic Deficit Model</div>
+    <h1>Scopolamine-Induced Amnesia</h1>
+    <p class="principle">Scopolamine, a muscarinic antagonist, blocks central cholinergic transmission and produces a reliable, reversible amnesia, modeling the cholinergic-deficit hypothesis of Alzheimer's disease. Step-through passive avoidance retention latency, sharply reduced by scopolamine, is restored by cholinesterase inhibitors and other nootropics.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage">
+        <div class="instr-lightdark"><div class="light"></div><div class="dark"></div></div><div class="instr-standard-mouse">🐁</div>
+        <div class="stage-label">Step-through box · 24 h retention, scopolamine pretreated</div>
+      </div>
+
+      <div class="field">
+        <label>Treatment</label>
+        <select id="drug">
+          <option value="scop">Scopolamine 1 mg/kg alone (control)</option>
+          <option value="donepezil0_5">+ Donepezil 0.5 mg/kg</option>
+          <option value="donepezil1">+ Donepezil 1 mg/kg</option>
+          <option value="piracetam">+ Piracetam 200 mg/kg</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Run 24 h retention trial</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <div class="readout">
+        <div><span class="big" id="primaryVal">—</span> <span class="unit">s step-through latency</span></div>
+        <div id="primaryNote" style="font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft); margin-top:0.3rem;"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>Latency (s)</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control mean</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group mean</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">% change vs control</span><span class="v" id="pctChange">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script src="../assets/js/sim-engine.js"></script>
+<script>
+SimEngine.numeric({
+  drugLabels: { scop: "Scopolamine 1 mg/kg alone (control)", donepezil0_5: "+ Donepezil 0.5 mg/kg", donepezil1: "+ Donepezil 1 mg/kg", piracetam: "+ Piracetam 200 mg/kg" },
+  controlKey: 'scop',
+  baselineMean: 45,
+  baselineSD: 8,
+  multipliers: { scop: 1, donepezil0_5: 1.8, donepezil1: 2.6, piracetam: 1.6 },
+  noiseSD: 3.2,
+  clampMin: 5,
+  clampMax: 300,
+  
+  decimals: 0,
+  unitSuffix: ' s',
+  pctMode: 'signed'
+});
+</script>
+</body>
+</html>

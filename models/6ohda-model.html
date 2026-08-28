@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6-OHDA Lesion Model — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="brand-credit"><b>COREGENIX</b> — Made by Sant Kumar</span>
+  <span class="sub">CNS / Neuropharmacology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Parkinsonism · Neurotoxin Lesion Model</div>
+    <h1>6-OHDA Lesion Model</h1>
+    <p class="principle">6-hydroxydopamine, injected stereotaxically into the substantia nigra/medial forebrain bundle, selectively destroys dopaminergic neurons, producing a unilateral parkinsonian lesion. Challenge with a dopamine agonist (apomorphine) produces contralateral rotations proportional to lesion severity - a standard readout for neuroprotective candidate drugs.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage">
+        <div class="instr-cage"><div class="bars"></div></div><div class="instr-standard-mouse">🐀</div>
+        <div class="stage-label">Rotometer · rotations scored post-apomorphine challenge</div>
+      </div>
+
+      <div class="field">
+        <label>Treatment</label>
+        <select id="drug">
+          <option value="lesion">6-OHDA lesion, vehicle (control)</option>
+          <option value="levodopa">6-OHDA + Levodopa 50 mg/kg</option>
+          <option value="selegiline">6-OHDA + Selegiline 5 mg/kg (pretreatment)</option>
+          <option value="quercetin">6-OHDA + Quercetin 50 mg/kg (antioxidant)</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Challenge with apomorphine & count rotations</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <div class="readout">
+        <div><span class="big" id="primaryVal">—</span> <span class="unit">net rotations / min</span></div>
+        <div id="primaryNote" style="font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft); margin-top:0.3rem;"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>Rotations/min</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control mean</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group mean</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">% reduction vs lesion-only</span><span class="v" id="pctChange">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script src="../assets/js/sim-engine.js"></script>
+<script>
+SimEngine.numeric({
+  drugLabels: { lesion: "6-OHDA lesion, vehicle (control)", levodopa: "6-OHDA + Levodopa 50 mg/kg", selegiline: "6-OHDA + Selegiline 5 mg/kg (pretreatment)", quercetin: "6-OHDA + Quercetin 50 mg/kg (antioxidant)" },
+  controlKey: 'lesion',
+  baselineMean: 9,
+  baselineSD: 1.2,
+  multipliers: { lesion: 1, levodopa: 0.7, selegiline: 0.55, quercetin: 0.65 },
+  noiseSD: 0.48,
+  clampMin: 0,
+  clampMax: 20,
+  
+  decimals: 1,
+  unitSuffix: '',
+  pctMode: 'inhibition'
+});
+</script>
+</body>
+</html>

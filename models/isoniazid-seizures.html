@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Isoniazid-Induced Seizures — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="brand-credit"><b>COREGENIX</b> — Made by Sant Kumar</span>
+  <span class="sub">CNS / Neuropharmacology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Anticonvulsant Activity · Pyridoxine-Antagonist Model</div>
+    <h1>Isoniazid-Induced Seizures</h1>
+    <p class="principle">Isoniazid inhibits pyridoxal phosphokinase, depleting active vitamin B6 and reducing GABA synthesis (GAD is a B6-dependent enzyme), which precipitates seizures. This model demonstrates that pyridoxine supplementation - not typical anticonvulsants - is the definitive antidote.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage">
+        <div class="instr-cage"><div class="bars"></div></div><div class="instr-standard-mouse">🐁</div>
+        <div class="stage-label">Observation cage · seizure onset up to 2 h</div>
+      </div>
+
+      <div class="field">
+        <label>Treatment</label>
+        <select id="drug">
+          <option value="saline">Normal saline (control)</option>
+          <option value="pyridoxine50">+ Pyridoxine 50 mg/kg i.p.</option>
+          <option value="pyridoxine100">+ Pyridoxine 100 mg/kg i.p.</option>
+          <option value="diazepam3">+ Diazepam 3 mg/kg i.p.</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Inject isoniazid & observe for seizure</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <div class="readout">
+        <div><span class="big" id="primaryVal">—</span> <span class="unit"></span></div>
+        <div id="primaryNote" style="font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft); margin-top:0.3rem;"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>Outcome</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control mean</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group mean</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">Animals protected / tested</span><span class="v" id="ratio">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script src="../assets/js/sim-engine.js"></script>
+<script>
+SimEngine.binary({
+  drugLabels: { saline: "Normal saline (control)", pyridoxine50: "+ Pyridoxine 50 mg/kg i.p.", pyridoxine100: "+ Pyridoxine 100 mg/kg i.p.", diazepam3: "+ Diazepam 3 mg/kg i.p." },
+  controlKey: 'saline',
+  protectProb: { saline: 0.05, pyridoxine50: 0.55, pyridoxine100: 0.88, diazepam3: 0.35 },
+  posLabel: 'PROTECTED',
+  negLabel: 'SEIZURE +',
+  posNote: 'No seizure within observation period',
+  negNote: 'Generalized seizure observed'
+});
+</script>
+</body>
+</html>

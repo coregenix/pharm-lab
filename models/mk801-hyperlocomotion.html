@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MK-801-Induced Hyperlocomotion — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="brand-credit"><b>COREGENIX</b> — Made by Sant Kumar</span>
+  <span class="sub">CNS / Neuropharmacology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Antipsychotic Activity · NMDA Antagonist / Glutamate Model</div>
+    <h1>MK-801-Induced Hyperlocomotion</h1>
+    <p class="principle">MK-801 (dizocilpine), an NMDA receptor antagonist, produces marked hyperlocomotion and is used to model the glutamatergic hypothesis of schizophrenia. Locomotor counts are recorded in an activity chamber over 30-60 min. Atypical antipsychotics, notably clozapine, are more effective here than typical agents - a key pharmacological distinction.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage">
+        <div class="instr-chamber"></div><div class="instr-standard-mouse">🐁</div>
+        <div class="stage-label">Activity chamber · 30 min post-MK-801</div>
+      </div>
+
+      <div class="field">
+        <label>Treatment</label>
+        <select id="drug">
+          <option value="mk801">MK-801 0.3 mg/kg alone (control)</option>
+          <option value="haloperidol">+ Haloperidol 0.5 mg/kg</option>
+          <option value="clozapine">+ Clozapine 5 mg/kg</option>
+          <option value="clozapine10">+ Clozapine 10 mg/kg</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Dose MK-801 & record locomotor counts</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <div class="readout">
+        <div><span class="big" id="primaryVal">—</span> <span class="unit">beam breaks / 30 min</span></div>
+        <div id="primaryNote" style="font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft); margin-top:0.3rem;"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>Counts</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control mean</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group mean</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">% suppression of hyperlocomotion</span><span class="v" id="pctChange">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script src="../assets/js/sim-engine.js"></script>
+<script>
+SimEngine.numeric({
+  drugLabels: { mk801: "MK-801 0.3 mg/kg alone (control)", haloperidol: "+ Haloperidol 0.5 mg/kg", clozapine: "+ Clozapine 5 mg/kg", clozapine10: "+ Clozapine 10 mg/kg" },
+  controlKey: 'mk801',
+  baselineMean: 850,
+  baselineSD: 60,
+  multipliers: { mk801: 1, haloperidol: 0.8, clozapine: 0.35, clozapine10: 0.2 },
+  noiseSD: 24.0,
+  clampMin: 100,
+  clampMax: 1400,
+  
+  decimals: 0,
+  unitSuffix: '',
+  pctMode: 'inhibition'
+});
+</script>
+</body>
+</html>

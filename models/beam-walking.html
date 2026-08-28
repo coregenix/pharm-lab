@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beam Walking Test — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="brand-credit"><b>COREGENIX</b> — Made by Sant Kumar</span>
+  <span class="sub">CNS / Neuropharmacology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Motor Coordination · Fine Balance Model</div>
+    <h1>Beam Walking Test</h1>
+    <p class="principle">An animal crosses a narrow elevated beam toward a home enclosure; the number of hind-limb foot slips off the beam is counted, providing a more sensitive measure of fine motor coordination and balance than rotarod alone - particularly useful in Parkinsonian and lesion models where subtle deficits might otherwise be missed.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage">
+        <div class="instr-bar" style="width:150px;"></div><div class="instr-standard-mouse">🐁</div>
+        <div class="stage-label">Elevated beam · single crossing, foot slips counted</div>
+      </div>
+
+      <div class="field">
+        <label>Treatment</label>
+        <select id="drug">
+          <option value="saline">Normal saline (control)</option>
+          <option value="rotenone">Rotenone-lesioned, untreated</option>
+          <option value="rotenone_selegiline">Rotenone-lesioned + Selegiline 5 mg/kg</option>
+          <option value="rotenone_coq10">Rotenone-lesioned + CoQ10 200 mg/kg</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Cross beam & count foot slips</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <div class="readout">
+        <div><span class="big" id="primaryVal">—</span> <span class="unit">foot slips / crossing</span></div>
+        <div id="primaryNote" style="font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft); margin-top:0.3rem;"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>Foot slips</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control mean</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group mean</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">% reduction in foot slips</span><span class="v" id="pctChange">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script src="../assets/js/sim-engine.js"></script>
+<script>
+SimEngine.numeric({
+  drugLabels: { saline: "Normal saline (control)", rotenone: "Rotenone-lesioned, untreated", rotenone_selegiline: "Rotenone-lesioned + Selegiline 5 mg/kg", rotenone_coq10: "Rotenone-lesioned + CoQ10 200 mg/kg" },
+  controlKey: 'saline',
+  baselineMean: 2.5,
+  baselineSD: 0.8,
+  multipliers: { saline: 1, rotenone: 3.4, rotenone_selegiline: 1.6, rotenone_coq10: 1.9 },
+  noiseSD: 0.32,
+  clampMin: 0,
+  clampMax: 20,
+  
+  decimals: 1,
+  unitSuffix: '',
+  pctMode: 'inhibition'
+});
+</script>
+</body>
+</html>

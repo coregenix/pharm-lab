@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tail Immersion Test — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="brand-credit"><b>COREGENIX</b> — Made by Sant Kumar</span>
+  <span class="sub">CNS / Neuropharmacology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Analgesic Activity · Spinal/Supraspinal Pain Model</div>
+    <h1>Tail Immersion Test</h1>
+    <p class="principle">The distal ~5 cm of a rat's tail is immersed in a water bath held at 55 degrees C, and the latency to withdraw the tail is recorded. It shares features of both the tail-flick and hot-plate assays and is especially useful for repeated within-animal dose-response testing, since immersion is less tissue-damaging than radiant heat. Opioids prolong latency dose-dependently; a 15 s cut-off is enforced.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage">
+        <div class="instr-trough"></div><div class="instr-standard-mouse">🐀</div>
+        <div class="stage-label">Water bath · 55 C · cut-off 15 s</div>
+      </div>
+
+      <div class="field">
+        <label>Treatment</label>
+        <select id="drug">
+          <option value="saline">Normal saline (control)</option>
+          <option value="aspirin150">Aspirin 150 mg/kg</option>
+          <option value="pentazocine">Pentazocine 10 mg/kg</option>
+          <option value="morphine2">Morphine 2 mg/kg</option>
+          <option value="morphine5">Morphine 5 mg/kg</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Immerse tail & time withdrawal</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <div class="readout">
+        <div><span class="big" id="primaryVal">—</span> <span class="unit">s to tail withdrawal</span></div>
+        <div id="primaryNote" style="font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft); margin-top:0.3rem;"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>Latency (s)</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control mean</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group mean</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">% change vs control</span><span class="v" id="pctChange">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script src="../assets/js/sim-engine.js"></script>
+<script>
+SimEngine.numeric({
+  drugLabels: { saline: "Normal saline (control)", aspirin150: "Aspirin 150 mg/kg", pentazocine: "Pentazocine 10 mg/kg", morphine2: "Morphine 2 mg/kg", morphine5: "Morphine 5 mg/kg" },
+  controlKey: 'saline',
+  baselineMean: 4.2,
+  baselineSD: 0.5,
+  multipliers: { saline: 1, aspirin150: 1.08, pentazocine: 1.6, morphine2: 1.9, morphine5: 2.7 },
+  noiseSD: 0.2,
+  clampMin: 1.5,
+  clampMax: 15,
+  cutoff: 15,
+  decimals: 1,
+  unitSuffix: ' s',
+  pctMode: 'signed'
+});
+</script>
+</body>
+</html>

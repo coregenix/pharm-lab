@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tail Suspension Test — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="brand-credit"><b>COREGENIX</b> — Made by Sant Kumar</span>
+  <span class="sub">CNS / Neuropharmacology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Antidepressant Activity · Behavioral Despair Model</div>
+    <h1>Tail Suspension Test</h1>
+    <p class="principle">A mouse is suspended by its tail for 6 minutes; after initial escape-oriented movement, untreated mice adopt an immobile posture. Immobility time is scored, analogous to the forced swim test but avoiding confounds from water exposure. Antidepressants across classes reduce immobility.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage">
+        <div style="position:absolute; left:50%; top:15%; width:2px; height:35px; background:#5C6A5F; transform:translateX(-50%);"></div><div class="instr-standard-mouse" style="top:55%;">🐁</div>
+        <div class="stage-label">Tail suspension · 6 min session</div>
+      </div>
+
+      <div class="field">
+        <label>Treatment</label>
+        <select id="drug">
+          <option value="saline">Normal saline (control)</option>
+          <option value="imipramine10">Imipramine 10 mg/kg</option>
+          <option value="imipramine20">Imipramine 20 mg/kg</option>
+          <option value="fluoxetine10">Fluoxetine 10 mg/kg</option>
+          <option value="fluoxetine20">Fluoxetine 20 mg/kg</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Suspend & score immobility</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <div class="readout">
+        <div><span class="big" id="primaryVal">—</span> <span class="unit">s immobile / 240 s</span></div>
+        <div id="primaryNote" style="font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft); margin-top:0.3rem;"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>Immobility (s)</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control mean</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group mean</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">% reduction vs control</span><span class="v" id="pctChange">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script src="../assets/js/sim-engine.js"></script>
+<script>
+SimEngine.numeric({
+  drugLabels: { saline: "Normal saline (control)", imipramine10: "Imipramine 10 mg/kg", imipramine20: "Imipramine 20 mg/kg", fluoxetine10: "Fluoxetine 10 mg/kg", fluoxetine20: "Fluoxetine 20 mg/kg" },
+  controlKey: 'saline',
+  baselineMean: 145,
+  baselineSD: 12,
+  multipliers: { saline: 1, imipramine10: 0.7, imipramine20: 0.48, fluoxetine10: 0.75, fluoxetine20: 0.55 },
+  noiseSD: 4.8,
+  clampMin: 15,
+  clampMax: 240,
+  
+  decimals: 0,
+  unitSuffix: ' s',
+  pctMode: 'inhibition'
+});
+</script>
+</body>
+</html>

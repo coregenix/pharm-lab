@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rotenone-Induced Model — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="brand-credit"><b>COREGENIX</b> — Made by Sant Kumar</span>
+  <span class="sub">CNS / Neuropharmacology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Parkinsonism · Mitochondrial Toxin Model</div>
+    <h1>Rotenone-Induced Model</h1>
+    <p class="principle">Chronic low-dose rotenone, a mitochondrial complex I inhibitor, reproduces many hallmark features of Parkinson's disease - including nigral dopaminergic loss and motor deficits - modeling the mitochondrial-dysfunction hypothesis. Motor coordination (rotarod fall latency) is used to track disease severity and the protective effect of candidate neuroprotective agents.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage">
+        <div class="instr-bar"></div><div class="instr-standard-mouse">🐁</div>
+        <div class="stage-label">Rotarod readout · chronic rotenone exposure</div>
+      </div>
+
+      <div class="field">
+        <label>Treatment</label>
+        <select id="drug">
+          <option value="rotenone">Rotenone, chronic, vehicle (control)</option>
+          <option value="selegiline">+ Selegiline 5 mg/kg</option>
+          <option value="quercetin">+ Quercetin 50 mg/kg</option>
+          <option value="coq10">+ Coenzyme Q10 200 mg/kg</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Test motor coordination on rotarod</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <div class="readout">
+        <div><span class="big" id="primaryVal">—</span> <span class="unit">s fall latency</span></div>
+        <div id="primaryNote" style="font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft); margin-top:0.3rem;"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>Fall latency (s)</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control mean</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group mean</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">% change vs control</span><span class="v" id="pctChange">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script src="../assets/js/sim-engine.js"></script>
+<script>
+SimEngine.numeric({
+  drugLabels: { rotenone: "Rotenone, chronic, vehicle (control)", selegiline: "+ Selegiline 5 mg/kg", quercetin: "+ Quercetin 50 mg/kg", coq10: "+ Coenzyme Q10 200 mg/kg" },
+  controlKey: 'rotenone',
+  baselineMean: 60,
+  baselineSD: 10,
+  multipliers: { rotenone: 1, selegiline: 1.6, quercetin: 1.4, coq10: 1.5 },
+  noiseSD: 4.0,
+  clampMin: 5,
+  clampMax: 180,
+  
+  decimals: 0,
+  unitSuffix: ' s',
+  pctMode: 'signed'
+});
+</script>
+</body>
+</html>

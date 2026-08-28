@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Haloperidol-Induced Catalepsy — Experimental Pharmacology Lab</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <a class="home-link" href="../index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="brand-credit"><b>COREGENIX</b> — Made by Sant Kumar</span>
+  <span class="sub">CNS / Neuropharmacology</span>
+</div>
+
+<div class="sim-wrap">
+  <a class="back-link" href="../index.html">← All models</a>
+  <div class="sim-header">
+    <div class="eyebrow">Parkinsonism / Antiparkinsonian Screening Model</div>
+    <h1>Haloperidol-Induced Catalepsy</h1>
+    <p class="principle">Haloperidol, a potent D2 antagonist, induces catalepsy that closely mimics drug-induced parkinsonism/extrapyramidal side effects. This bar-test model is used specifically to screen antiparkinsonian and anticholinergic agents for their ability to reverse dopamine-antagonist-induced catalepsy.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <h2>Apparatus</h2>
+      <div class="stage" id="stage">
+        <div class="instr-bar"></div><div class="instr-standard-mouse">🐁</div>
+        <div class="stage-label">Bar test · scored 1 h post-haloperidol</div>
+      </div>
+
+      <div class="field">
+        <label>Treatment</label>
+        <select id="drug">
+          <option value="halo">Haloperidol 1 mg/kg alone (control)</option>
+          <option value="trihexyphenidyl2">+ Trihexyphenidyl 2 mg/kg</option>
+          <option value="trihexyphenidyl5">+ Trihexyphenidyl 5 mg/kg</option>
+          <option value="levodopa">+ Levodopa 50 mg/kg</option>
+        </select>
+      </div>
+
+      <button class="run" id="runBtn">Place paws on bar & time catalepsy</button>
+      <button class="reset" id="resetBtn">Reset log</button>
+
+      <div class="readout">
+        <div><span class="big" id="primaryVal">—</span> <span class="unit">s on bar</span></div>
+        <div id="primaryNote" style="font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft); margin-top:0.3rem;"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Trial Log</h2>
+      <table class="log">
+        <thead><tr><th>#</th><th>Treatment</th><th>Catalepsy (s)</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+
+      <h2 style="margin-top:1rem;">Group Summary</h2>
+      <div class="stat-row"><span class="k">Control mean</span><span class="v" id="ctrlMean">—</span></div>
+      <div class="stat-row"><span class="k">Current group mean</span><span class="v" id="grpMean">—</span></div>
+      <div class="stat-row"><span class="k">% reversal of catalepsy</span><span class="v" id="pctChange">—</span></div>
+      <div class="stat-row"><span class="k">Trials run</span><span class="v" id="nTrials">0</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/lab.js"></script>
+<script src="../assets/js/sim-engine.js"></script>
+<script>
+SimEngine.numeric({
+  drugLabels: { halo: "Haloperidol 1 mg/kg alone (control)", trihexyphenidyl2: "+ Trihexyphenidyl 2 mg/kg", trihexyphenidyl5: "+ Trihexyphenidyl 5 mg/kg", levodopa: "+ Levodopa 50 mg/kg" },
+  controlKey: 'halo',
+  baselineMean: 140,
+  baselineSD: 15,
+  multipliers: { halo: 1, trihexyphenidyl2: 0.45, trihexyphenidyl5: 0.2, levodopa: 0.55 },
+  noiseSD: 6.0,
+  clampMin: 5,
+  clampMax: 300,
+  cutoff: 300,
+  decimals: 0,
+  unitSuffix: ' s',
+  pctMode: 'inhibition'
+});
+</script>
+</body>
+</html>
