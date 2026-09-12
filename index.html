@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Experimental Pharmacology Lab — CAL Simulation Catalog</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="topbar">
+  <a class="home-link" href="index.html">Experimental Pharmacology Lab</a>
+  <span class="mark">CAL SIM</span>
+  <span class="brand-credit"><b>COREGENIX</b> — Made by Sant Kumar</span>
+  <span class="sub">open-source · student edition · v0.1</span>
+</div>
+
+<div class="hero">
+  <div class="eyebrow">Computer-Assisted Learning</div>
+  <h1>The animal never leaves the page.</h1>
+  <p>An open catalog of experimental pharmacology models rebuilt as browser
+  simulations — same protocols, doses, and readouts your lab manual expects,
+  none of the animal cost. Pick a model below, choose a drug and dose,
+  run the trial, and read the data the way you would from a real bench.</p>
+</div>
+
+<div class="cat-nav" id="catNav"></div>
+
+<main id="catalog"></main>
+
+<footer>
+  Bureau-style CAL software, reimagined as a static, open-source web app —
+  built for GitHub Pages. ● live = interactive simulation available ·
+  ○ planned = on the roadmap, contributions welcome. See README for how to
+  add a model.
+  <div style="margin-top:1rem; padding-top:1rem; border-top:1px solid var(--line); font-family:var(--display); font-size:0.95rem; color:var(--ink); letter-spacing:0.02em;">
+    COREGENIX <span style="font-family:var(--mono); font-size:0.7rem; color:#5C6A5F;">— Made by Sant Kumar</span>
+  </div>
+</footer>
+
+<script src="data/models-data.js"></script>
+<script>
+  const catalogEl = document.getElementById('catalog');
+  const navEl = document.getElementById('catNav');
+
+  function slug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g,'-'); }
+
+  MODEL_CATALOG.forEach((group, i) => {
+    const id = slug(group.category);
+
+    // nav chip
+    const btn = document.createElement('button');
+    btn.textContent = group.category;
+    btn.onclick = () => document.getElementById(id).scrollIntoView({behavior:'smooth', block:'start'});
+    navEl.appendChild(btn);
+
+    // section
+    const section = document.createElement('section');
+    section.className = `category-block cat-${i % 18}`;
+    section.id = id;
+
+    const liveCount = group.models.filter(m => m.status === 'live').length;
+    section.innerHTML = `<h2>${group.category} <span style="font-family:var(--mono);font-size:0.7rem;color:var(--ink-soft);font-weight:400;">(${liveCount}/${group.models.length} live)</span></h2>`;
+
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+
+    group.models.forEach(m => {
+      const isLive = m.status === 'live';
+      const el = document.createElement(isLive ? 'a' : 'div');
+      el.className = `card ${isLive ? 'live' : 'planned'}`;
+      if (isLive) el.href = m.href;
+      el.innerHTML = `
+        <div class="status">${isLive ? '● live' : '○ planned'}</div>
+        <h3>${m.name}</h3>
+        <p>${isLive ? 'Run interactive trial →' : 'Awaiting build'}</p>
+      `;
+      grid.appendChild(el);
+    });
+
+    section.appendChild(grid);
+    catalogEl.appendChild(section);
+  });
+</script>
+</body>
+</html>
